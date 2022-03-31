@@ -1,10 +1,9 @@
-name: Push Docker images to DockerHub and ECR and deploy to AWS
+name: Deploy to AWS
 
 on:
   push:
     branches:
       - main
-  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -23,6 +22,7 @@ jobs:
 
   deploy-lambda:
     uses: exercism/github-actions/.github/workflows/deploy-lambda.yml@workflow-lambda
+    needs: build-and-push-image
     with:
       function_name: snippet_extractor
     secrets:
@@ -30,5 +30,3 @@ jobs:
       AWS_REGION: ${{secrets.AWS_REGION}}
       AWS_ECR_ACCESS_KEY_ID: ${{secrets.AWS_LAMBDA_ACCESS_KEY_ID}}
       AWS_ECR_SECRET_ACCESS_KEY: ${{secrets.AWS_LAMBDA_SECRET_ACCESS_KEY}}
-      DOCKERHUB_USERNAME: ${{secrets.DOCKERHUB_USERNAME}}
-      DOCKERHUB_PASSWORD: ${{secrets.DOCKERHUB_PASSWORD}}
